@@ -25,6 +25,7 @@ func NewStockBroker() *StockBroker {
 		OrderQueue: make(chan Order, 100),
 	}
 
+	go stockBrokerInstance.ProcessOrder()
 	return stockBrokerInstance
 }
 
@@ -110,11 +111,21 @@ func (s *StockBroker) GetAllStocks() {
 	}
 }
 
-func (s *StockBroker) ProcessOrder(order Order) {
+func (s *StockBroker) Placeorder(order Order) {
 	fmt.Println("––––––––––––––––––––––––––––––––––———————–")
-	if err := order.Execute(); err != nil {
-		fmt.Println("Order Processing Failed: ", err.Error())
-		return
+	s.OrderQueue <- order
+	fmt.Println("Order placed")
+}
+
+func (s *StockBroker) ProcessOrder() {
+
+	fmt.Println("––––––––––––––––––––––––––––––––––———————–")
+	for order := range s.OrderQueue {
+
+		if err := order.Execute(); err != nil {
+			fmt.Println("Order Processing Failed: ", err.Error())
+			return
+		}
 	}
 
 	fmt.Println("Order processed Successfully")

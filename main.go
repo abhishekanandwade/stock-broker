@@ -21,6 +21,5 @@ func main() {
 
 	order1 := app.NewBuyOrder("1", sb.GetStock("RIL"), account, 2, 124.93)
 
-	sb.ProcessOrder(order1)
-
+	sb.Placeorder(order1)
 }
